@@ -128,21 +128,21 @@ void append(bytes& s, float64_t x) {
 }
 
 void append(bytes& s, const std::string& x) {
-  auto last = x.begin();
-  for (auto i = x.begin(); i < x.end(); i++) {
-    switch (byte_t(*i)) {
+  auto l = x.begin();
+  for (auto c = x.begin(); c < x.end(); c++) {
+    switch (byte_t(*c)) {
       case 0x00:
-        s.insert(s.end(), last, i);
+        s.insert(s.end(), l, c);
         s.insert(s.end(), &lit00[0], &lit00[0] + 2);
-        last = i + 1;
+        l = c + 1;
         break;
       case 0xff:
-        s.insert(s.end(), last, i);
+        s.insert(s.end(), l, c);
         s.insert(s.end(), &litff[0], &litff[0] + 2);
-        last = i + 1;
+        l = c + 1;
     }
   }
-  s.insert(s.end(), last, x.end());
+  s.insert(s.end(), l, x.end());
   s.insert(s.end(), &term[0], &term[0] + 2);
 }
 
