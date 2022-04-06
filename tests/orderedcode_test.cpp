@@ -353,7 +353,6 @@ TEST_CASE("orderedcode: each and pack", "[noir][codec]") {
   float64_t f = 0.333333333;
   string s = "foo";
   decr<string> ds{string("bar")};
-  infinity inf1;
 
   bytes b;
   orderedcode::append(b, i);
@@ -361,10 +360,10 @@ TEST_CASE("orderedcode: each and pack", "[noir][codec]") {
   orderedcode::append(b, f);
   orderedcode::append(b, s);
   orderedcode::append(b, ds);
-  orderedcode::append(b, inf1);
+  orderedcode::append(b, infinity{});
 
   bytes b2;
-  orderedcode::append(b2, i, i2, f, s, ds, inf1);
+  orderedcode::append(b2, i, i2, f, s, ds, infinity{});
 
   CHECK(b == b2);
 
