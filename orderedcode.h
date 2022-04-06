@@ -150,7 +150,7 @@ void append(bytes& s, const trailing_string& x) {
   s.insert(s.end(), x.begin(), x.end());
 }
 
-void append(bytes& s, infinity _) {
+void append(bytes& s, const infinity& _) {
   s.insert(s.end(), &inf[0], &inf[0] + 2);
 }
 
