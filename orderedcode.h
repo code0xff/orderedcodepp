@@ -170,21 +170,21 @@ void append(bytes& s, const string_or_infinity& x) {
 }
 
 template<typename T>
-void append(bytes& buf, decr<T> d) {
-  size_t n = buf.size();
+void append(bytes& s, decr<T> d) {
+  size_t n = s.size();
   if (is_same_v<T, infinity>) {
-    append(buf);
+    append(s);
   } else {
-    append(buf, d.val);
+    append(s, d.val);
   }
-  span<byte_t> s(&buf[n], buf.size() - n);
-  invert(s);
+  span<byte_t> sp(&s[n], s.size() - n);
+  invert(sp);
 }
 
 template<typename It, typename... Its>
-void append(bytes& buf, It it, Its... its) {
-  append(buf, it);
-  append(buf, its...);
+void append(bytes& s, It it, Its... its) {
+  append(s, it);
+  append(s, its...);
 }
 
 void parse(span<byte_t>& s, byte_t dir, int64_t& dst) {
