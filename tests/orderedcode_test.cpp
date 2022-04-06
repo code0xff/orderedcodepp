@@ -7,7 +7,7 @@
 using namespace std;
 using namespace orderedcode;
 
-TEST_CASE("orderedcode: append uint64", "[noir][codec]") {
+TEST_CASE("orderedcode: append and parse uint64", "[noir][codec]") {
   map<uint64_t, bytes> testcase;
   testcase.emplace(make_pair<uint64_t, bytes>(uint64_t(0), {0x00}));
   testcase.emplace(make_pair<uint64_t, bytes>(uint64_t(1), {0x01, 0x01}));
@@ -43,7 +43,7 @@ TEST_CASE("orderedcode: append uint64", "[noir][codec]") {
   CHECK(b == b2);
 }
 
-TEST_CASE("orderedcode: append string", "[noir][codec]") {
+TEST_CASE("orderedcode: append and parse string", "[noir][codec]") {
   map<string, bytes> testcase;
   testcase.emplace(make_pair<string, bytes>(str_const(""), {0x00, 0x01}));
   testcase.emplace(make_pair<string, bytes>(str_const("\x00"), {0x00, 0xff, 0x00, 0x01}));
@@ -82,7 +82,7 @@ TEST_CASE("orderedcode: append string", "[noir][codec]") {
   CHECK(b == b2);
 }
 
-TEST_CASE("orderedcode: append infinity", "[noir][codec]") {
+TEST_CASE("orderedcode: append and parse infinity", "[noir][codec]") {
   infinity inf1;
   bytes b;
   append(b, inf1);
@@ -98,7 +98,7 @@ TEST_CASE("orderedcode: append infinity", "[noir][codec]") {
   CHECK(inf2 == infinity{});
 }
 
-TEST_CASE("orderedcode: append float64", "[noir][codec]") {
+TEST_CASE("orderedcode: append and parse float64", "[noir][codec]") {
   map<orderedcode::float64_t, bytes> testcase;
 
   testcase.emplace(make_pair<orderedcode::float64_t, bytes>(-std::numeric_limits<orderedcode::float64_t>::infinity(),
@@ -179,7 +179,7 @@ TEST_CASE("orderedcode: append float64", "[noir][codec]") {
   CHECK(b == b5);
 }
 
-TEST_CASE("orderedcode: append int64", "[noir][codec]") {
+TEST_CASE("orderedcode: append and parse int64", "[noir][codec]") {
   map<int64_t, bytes> testcase;
 
   testcase.emplace(make_pair<int64_t, bytes>(-8193, {0x1f, 0xdf, 0xff}));
