@@ -269,8 +269,8 @@ void parse(span<byte_t>& s, byte_t dir, string& dst) {
             }
             buf.insert(buf.end(), s.begin() + l, s.begin() + i);
             if (dir == decreasing) {
-              span<byte_t> s2(buf);
-              invert(s2);
+              span<byte_t> sp(buf);
+              invert(sp);
             }
             dst.insert(dst.end(), buf.begin(), buf.end());
             s = s.subspan(i + 2);
