@@ -150,12 +150,8 @@ void append(bytes& s, const trailing_string& x) {
   s.insert(s.end(), x.begin(), x.end());
 }
 
-void append(bytes& s) {
+void append(bytes& s, infinity _) {
   s.insert(s.end(), &inf[0], &inf[0] + 2);
-}
-
-void append(bytes& s, infinity& _) {
-  append(s);
 }
 
 void append(bytes& s, const string_or_infinity& x) {
@@ -163,7 +159,7 @@ void append(bytes& s, const string_or_infinity& x) {
     if (x.s.empty()) {
       throw runtime_error("orderedcode: string_or_infinity has non-zero string and non-zero infinity");
     }
-    append(s);
+    append(s, infinity{});
   } else {
     append(s, x.s);
   }
@@ -172,11 +168,7 @@ void append(bytes& s, const string_or_infinity& x) {
 template<typename T>
 void append(bytes& s, decr<T> d) {
   size_t n = s.size();
-  if (is_same_v<T, infinity>) {
-    append(s);
-  } else {
-    append(s, d.val);
-  }
+  append(s, d.val);
   span<byte_t> sp(&s[n], s.size() - n);
   invert(sp);
 }
@@ -249,7 +241,7 @@ void parse(span<byte_t>& s, byte_t dir, uint64_t& dst) {
   s = s.subspan(1 + n);
 }
 
-void parse(span<byte_t>& s, byte_t dir) {
+void parse(span<byte_t>& s, byte_t dir, infinity& _) {
   if (s.size() < 2) {
     throw runtime_error("orderedcode: corrupt input");
   }
@@ -321,9 +313,10 @@ void parse(span<byte_t>& s, byte_t dir, float64_t& dst) {
   }
 }
 
-void parse(span<byte_t>& s, size_t& pos, byte_t dir, string_or_infinity& dst) {
+void parse(span<byte_t>& s, byte_t dir, string_or_infinity& dst) {
   try {
-    parse(s, dir);
+    infinity _;
+    parse(s, dir, _);
     dst.inf = true;
     return;
   } catch (...) {
@@ -342,20 +335,12 @@ void parse(span<byte_t>& s, byte_t dir, trailing_string& dst) {
 
 template<typename T>
 void parse(span<byte_t>& s, decr<T>& dst) {
-  if (is_same_v<T, infinity>) {
-    parse(s, decreasing);
-  } else {
-    parse(s, decreasing, dst.val);
-  }
+  parse(s, decreasing, dst.val);
 }
 
 template<typename It>
 void parse(span<byte_t>& s, It& it) {
-  if (is_same_v<It, infinity>) {
-    parse(s, increasing);
-  } else {
-    parse(s, increasing, it);
-  }
+  parse(s, increasing, it);
 }
 
 template<typename It, typename... Its>
