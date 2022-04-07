@@ -156,7 +156,7 @@ void append(bytes& s, const infinity& _) {
 
 void append(bytes& s, const string_or_infinity& x) {
   if (x.inf) {
-    if (x.s.empty()) {
+    if (!x.s.empty()) {
       throw runtime_error("orderedcode: string_or_infinity has non-zero string and non-zero infinity");
     }
     append(s, infinity{});
