@@ -298,7 +298,7 @@ void parse(span<byte_t>& s, byte_t dir, string& dst) {
         i++;
     }
   }
-  throw runtime_error("orderedcode: corrupt input4");
+  throw runtime_error("orderedcode: corrupt input");
 }
 
 void parse(span<byte_t>& s, byte_t dir, float64_t& dst) {
