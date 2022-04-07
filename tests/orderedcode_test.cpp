@@ -41,6 +41,16 @@ TEST_CASE("orderedcode: append and parse uint64", "[noir][codec]") {
     b2.insert(b2.end(), t.second.begin(), t.second.end());
   }
   CHECK(b == b2);
+
+  bytes b3;
+  decr<uint64_t> di;
+  for (auto& t : testcase) {
+    orderedcode::append(b3, decr<uint64_t>{t.first});
+    span<byte_t> sp(b3);
+    orderedcode::parse(sp, di);
+    CHECK(decr<uint64_t>{t.first} == di);
+    b3.clear();
+  }
 }
 
 TEST_CASE("orderedcode: append and parse string", "[noir][codec]") {
