@@ -325,6 +325,7 @@ void parse(span<byte_t>& s, byte_t dir, string_or_infinity& dst) {
 }
 
 void parse(span<byte_t>& s, byte_t dir, trailing_string& dst) {
+  dst.clear();
   if (dir == increasing) {
     dst.insert(dst.end(), s.begin(), s.end());
   } else {
