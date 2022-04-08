@@ -43,7 +43,7 @@ TEST_CASE("orderedcode: append and parse uint64", "[noir][codec]") {
   CHECK(b == b2);
 
   bytes b3;
-  decr<uint64_t> di;
+  decr<uint64_t> di{};
   for (auto& t : testcase) {
     orderedcode::append(b3, decr<uint64_t>{t.first});
     span<byte_t> sp(b3);
@@ -90,6 +90,16 @@ TEST_CASE("orderedcode: append and parse string", "[noir][codec]") {
     b2.insert(b2.end(), t.second.begin(), t.second.end());
   }
   CHECK(b == b2);
+
+  bytes b3;
+  decr<string> ds;
+  for (auto& t : testcase) {
+    orderedcode::append(b3, decr<string>{t.first});
+    span<byte_t> sp(b3);
+    orderedcode::parse(sp, ds);
+    CHECK(decr<string>{t.first} == ds);
+    b3.clear();
+  }
 }
 
 TEST_CASE("orderedcode: append and parse infinity", "[noir][codec]") {
@@ -100,12 +110,17 @@ TEST_CASE("orderedcode: append and parse infinity", "[noir][codec]") {
   bytes c = {0xff, 0xff};
   CHECK(b == c);
 
-  bytes d = {0xff, 0xff, 0xff, 0xff};
+  bytes b2 = {0xff, 0xff, 0xff, 0xff};
   infinity inf2;
-  span<byte_t> s(d);
+  span<byte_t> s(b2);
   parse(s, inf1, inf2);
   CHECK(inf1 == infinity{});
   CHECK(inf2 == infinity{});
+
+  bytes b3 = {0x00, 0x00};
+  bytes b4;
+  orderedcode::append(b4, decr<infinity>{});
+  CHECK(b3 == b4);
 }
 
 TEST_CASE("orderedcode: append and parse float64", "[noir][codec]") {
@@ -187,6 +202,16 @@ TEST_CASE("orderedcode: append and parse float64", "[noir][codec]") {
   orderedcode::append(b, f4);
   bytes b5 = {0x81};
   CHECK(b == b5);
+
+  bytes b6;
+  decr<float64_t> df{};
+  for (auto& t : testcase) {
+    orderedcode::append(b6, decr<float64_t>{t.first});
+    span<byte_t> sp(b6);
+    orderedcode::parse(sp, df);
+    CHECK(decr<float64_t>{t.first} == df);
+    b6.clear();
+  }
 }
 
 TEST_CASE("orderedcode: append and parse int64", "[noir][codec]") {
@@ -277,7 +302,6 @@ TEST_CASE("orderedcode: append and parse int64", "[noir][codec]") {
     make_pair<int64_t, bytes>(((int64_t)1 << 63) - 1, {0xff, 0xc0, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}));
 
   bytes b;
-
   for (auto& t : testcase) {
     orderedcode::append(b, t.first);
     CHECK(b == t.second);
@@ -291,15 +315,46 @@ TEST_CASE("orderedcode: append and parse int64", "[noir][codec]") {
     CHECK(i == t.first);
     b.clear();
   }
+
+  bytes b2;
+  decr<int64_t> di{};
+  for (auto& t : testcase) {
+    orderedcode::append(b2, decr<int64_t>{t.first});
+    span<byte_t> sp(b2);
+    orderedcode::parse(sp, di);
+    CHECK(decr<int64_t>{t.first} == di);
+    b2.clear();
+  }
 }
 
 TEST_CASE("orderedcode: increase decrease", "[noir][codec]") {
+  auto i1 = uint64_t(0);
+  auto di1 = decr<uint64_t>{1};
+  auto i2 = uint64_t(2);
+  auto di2 = decr<uint64_t>{516};
+  auto i3 = uint64_t(517);
+  auto di3 = decr<uint64_t>{0};
   bytes b;
-  orderedcode::append(
-    b, uint64_t(0), decr<uint64_t>{1}, uint64_t(2), decr<uint64_t>{516}, uint64_t(517), decr<uint64_t>{0});
+  orderedcode::append(b, i1, di1, i2, di2, i3, di3);
 
   bytes c = {0x00, 0xfe, 0xfe, 0x01, 0x02, 0xfd, 0xfd, 0xfb, 0x02, 0x02, 0x05, 0xff};
   CHECK(b == c);
+
+  uint64_t ti1;
+  decr<uint64_t> tdi1{};
+  uint64_t ti2;
+  decr<uint64_t> tdi2{};
+  uint64_t ti3;
+  decr<uint64_t> tdi3{};
+
+  std::span<byte_t> s(b);
+  orderedcode::parse(s, ti1, tdi1, ti2, tdi2, ti3, tdi3);
+  CHECK(i1 == ti1);
+  CHECK(di1 == tdi1);
+  CHECK(i2 == ti2);
+  CHECK(di2 == tdi2);
+  CHECK(i3 == ti3);
+  CHECK(di3 == tdi3);
 }
 
 TEST_CASE("orderedcode: round trip", "[noir][codec]") {
